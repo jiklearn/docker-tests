@@ -1,9 +1,11 @@
 name: apigw
 services:
   caddy:
-    image: caddy:2.9.1-builder-alpine
-    restart: unless-stopped
+    image: caddy:2.9.1-alpine
+    # restart: unless-stopped
     ports:
+      - "2016:2016"
+      - "2080:2080"
       - "80:80"
       - "443:443"
       - "443:443/udp"
@@ -19,24 +21,32 @@ services:
       POSTGRES_PASSWORD: test123
       POSTGRES_NON_ROOT_USER: test
       POSTGRES_NON_ROOT_USER_PASSWORD: test123
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backbone
   prometheus:
     image: prom/prometheus:v3.2.1
     # container_name: prometheus024701
-    # ports:
-    #   - 9090:9090
+    ports:
+      - 9090:9090
     restart: unless-stopped
     volumes:
       - promethues_config:/etc/prometheus
       - promethues_data:/prometheus
+    networks:
+      - backbone
   grafana:
     image: grafana/grafana:11.5.2
     restart: unless-stopped
-    # ports:
-    #  - '3000:3000'
+    ports:
+     - '3000:3000'
     volumes:
       - grafana_data:/var/lib/grafana
+    networks:
+      - backbone
   # app:
   # image: myapp:1
   #   depends_on:
@@ -64,3 +74,9 @@ volumes:
   grafana_data:
   promethues_data:   
   promethues_config:   
+
+networks:
+  backbone:
+    # driver: bridge
+    # driver: overlay
+    # internal: true

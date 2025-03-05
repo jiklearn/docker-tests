@@ -1,0 +1,52 @@
+name: apigw
+services:
+  # caddy:
+  #   image: caddy:2.9.1-alpine
+  #   # restart: unless-stopped
+  #   ports:
+  #     - "2016:2016"
+  #     - "2080:2080"
+  #     - "80:80"
+  #     - "443:443"
+  #     - "443:443/udp"
+  #   volumes:
+  #     - ./Caddyfile:/etc/caddy/Caddyfile
+  #     - ./caddy_site:/srv
+  #     - caddy_data:/data
+  #     - caddy_config:/config
+  #   networks:
+  #     - backbone
+  prometheus:
+    image: prom/prometheus:v3.2.1
+    # container_name: prometheus024701
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yml:/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--web.external-url=/prometheus/'
+    networks:
+      - backbone
+  # grafana:
+  #   image: grafana/grafana:11.5.2
+  #   restart: unless-stopped
+  #   ports:
+  #    - '3000:3000'
+  #   volumes:
+  #     - grafana_data:/var/lib/grafana
+  #   networks:
+  #     - backbone
+volumes:
+  postgres_data:
+  caddy_data:
+  caddy_config:
+  grafana_data:
+  prometheus_data:   
+
+networks:
+  backbone:
+    # driver: bridge
+    # driver: overlay
+    # internal: true
